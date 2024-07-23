@@ -1,0 +1,23 @@
+const elasticsearch = require('elasticsearch');
+
+const client = new elasticsearch.Client({
+  host: 'localhost:9200',
+  apiVersion: '7.10',
+});
+
+const searchIndex = async (query) => {
+  const response = await client.search({
+    index: 'y_search_index',
+    body: {
+      query: {
+        match: {
+          title: query,
+        },
+      },
+    },
+  });
+
+  return response.hits.hits;
+};
+
+module.exports = searchIndex;
