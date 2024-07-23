@@ -1,0 +1,47 @@
+import React, { useState, useEffect } from 'eact';
+import axios from 'axios';
+
+function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      setLoading(true);
+      const response = await axios.post('/api/search', { query: searchQuery });
+      setSearchResults(response.data);
+      setLoading(false);
+    };
+
+    fetchSearchResults();
+  }, [searchQuery]);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    setSearchQuery(event.target.value);
+  };
+
+  return (
+    <div>
+      <form>
+        <input type="search" value={searchQuery} onChange={handleSearch} />
+        <button type="submit">Search</button>
+      </form>
+      {loading? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {searchResults.map((result) => (
+            <li key={result.id}>
+              <a href={result.url}>{result.title}</a>
+              <p>{result.description}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+export default App;
